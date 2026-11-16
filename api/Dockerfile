@@ -49,9 +49,9 @@ RUN find /opt/venv -type f -name '*.pyc' -delete && \
     find /opt/venv -type d \( -name tests -o -name test -o -name examples \) -prune -exec rm -rf {} + && \
     find /opt/venv -name '*.pyi' -delete
 
-# Stage 2: Node deps for ts_validator (built with full node:22-slim, only
+# Stage 2: Node deps for ts_validator (built with full node:22.23.5-slim, only
 # node_modules is copied into the runner).
-FROM node:22-slim AS ts-deps
+FROM node:22.23.5-slim AS ts-deps
 WORKDIR /ts_validator
 COPY api/mcp_server/ts_validator/package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
@@ -123,7 +123,7 @@ COPY --from=ffmpeg-static /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 # Node.js 22 binary only (ts_validator subprocess needs node >=22.6 for
 # native TypeScript stripping; see api/mcp_server/ts_bridge.py). python:3.13-slim
 # already provides libstdc++6, libgcc-s1, and ca-certificates that node needs.
-COPY --from=node:22-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22.23.5-slim /usr/local/bin/node /usr/local/bin/node
 
 # Copy the populated venv from the builder stage. NLTK data lives at
 # /opt/venv/nltk_data and is auto-discovered via sys.prefix.
@@ -161,7 +161,7 @@ COPY --chown=dograh:dograh \
      ./scripts/drain_web.sh \
      ./scripts/
 
-# ts_validator Node deps (built in ts-deps stage with full node:22-slim image).
+# ts_validator Node deps (built in ts-deps stage with full node:22.23.5-slim image).
 # The validator runs as a short-lived subprocess from api/mcp_server/ts_bridge.py.
 COPY --from=ts-deps --chown=dograh:dograh /ts_validator/node_modules ./api/mcp_server/ts_validator/node_modules
 
