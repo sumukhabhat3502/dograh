@@ -39,6 +39,13 @@ function createFetchMock(autoStart: boolean) {
                         containerId: 'dograh-inline-container',
                     },
                     auto_start: autoStart,
+                    // Widget copy is server-owned (api/schemas/widget_texts.py WidgetTexts);
+                    // the widget renders nothing for a key the config omits.
+                    texts: {
+                        conversationEndedText: 'Conversation ended.',
+                        startNewChatText: 'Start new chat',
+                        chatRetryText: 'Retry',
+                    },
                 }),
             } as Response;
         }
